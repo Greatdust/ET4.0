@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # [中文](https://github.com/egametang/Egametang/blob/master/README-CN.md) 
 
 __Chinese Tencent QQ group : 474643097__  
@@ -53,3 +54,6 @@ Usage method：
 
 __Chinese Tencent QQ group : 474643097__  
 email: egametang@qq.com
+=======
+2018-10-6
+>>>>>>> master

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # [English](https://github.com/egametang/Egametang/blob/master/README.md) 
 
 __讨论QQ群 : 474643097__
@@ -150,3 +151,6 @@ __讨论QQ群 : 474643097__
 
 # 支付宝捐赠  
 ![使用支付宝对该项目进行捐赠](https://github.com/egametang/ET/blob/master/Doc/donate.png)
+=======
+2018-10-6
+>>>>>>> master
