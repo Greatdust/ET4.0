@@ -3,12 +3,7 @@ using System.Threading.Tasks;
 
 namespace ETModel
 {
-    /// <summary>
-    /// Actor普通消息处理基类 他没有返回消息 ，但会返回一个空的PRC相应   继承MessageHandler
-    /// </summary>
-    /// <typeparam name="E"></typeparam>
-    /// <typeparam name="Message"></typeparam>
-	public abstract class AMActorHandler<E, Message> : IMActorHandler where E : Entity where Message : class, IActorMessage
+    public abstract class AMActorLocationHandler<E, Message> : IMActorHandler where E : Entity where Message : class, IActorLocationMessage
     {
         protected abstract void Run(E entity, Message message);
 
@@ -26,6 +21,10 @@ namespace ETModel
                 Log.Error($"Actor类型转换错误: {entity.GetType().Name} to {typeof(E).Name}");
                 return;
             }
+
+            ActorResponse actorResponse = new ActorResponse();
+            actorResponse.RpcId = msg.RpcId;
+            session.Reply(actorResponse);
 
             this.Run(e, msg);
 

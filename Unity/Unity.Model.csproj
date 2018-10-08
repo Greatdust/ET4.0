@@ -591,7 +591,6 @@
       <HintPath>D:/Unity2018/2018.2.10f1/Editor/Data/PlaybackEngines/windowsstandalonesupport/UnityEditor.WindowsStandalone.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
-<<<<<<< HEAD
       <HintPath>G:/GitHub/ET4.0/Unity/Assets/Plugins/ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="JetBrains.Rider.Unity.Editor.Plugin.Repacked">
@@ -608,24 +607,6 @@
     </Reference>
     <Reference Include="NPOI.OpenXmlFormats">
       <HintPath>G:/GitHub/ET4.0/Unity/Assets/Plugins/Editor/npoi/NPOI.OpenXmlFormats.dll</HintPath>
-=======
-      <HintPath>G:/UNITY2018/ET-master/Unity/Assets/Plugins/ICSharpCode.SharpZipLib.dll</HintPath>
-    </Reference>
-    <Reference Include="JetBrains.Rider.Unity.Editor.Plugin.Repacked">
-      <HintPath>G:/UNITY2018/ET-master/Unity/Assets/Plugins/Editor/JetBrains/JetBrains.Rider.Unity.Editor.Plugin.Repacked.dll</HintPath>
-    </Reference>
-    <Reference Include="NPOI">
-      <HintPath>G:/UNITY2018/ET-master/Unity/Assets/Plugins/Editor/npoi/NPOI.dll</HintPath>
-    </Reference>
-    <Reference Include="NPOI.OOXML">
-      <HintPath>G:/UNITY2018/ET-master/Unity/Assets/Plugins/Editor/npoi/NPOI.OOXML.dll</HintPath>
-    </Reference>
-    <Reference Include="NPOI.OpenXml4Net">
-      <HintPath>G:/UNITY2018/ET-master/Unity/Assets/Plugins/Editor/npoi/NPOI.OpenXml4Net.dll</HintPath>
-    </Reference>
-    <Reference Include="NPOI.OpenXmlFormats">
-      <HintPath>G:/UNITY2018/ET-master/Unity/Assets/Plugins/Editor/npoi/NPOI.OpenXmlFormats.dll</HintPath>
->>>>>>> master
     </Reference>
     <Reference Include="UnityEditor.Advertisements">
       <HintPath>C:/Users/zwc/AppData/Local/Unity/cache/packages/packages.unity.com/com.unity.ads@2.0.8/Editor/UnityEditor.Advertisements.dll</HintPath>
