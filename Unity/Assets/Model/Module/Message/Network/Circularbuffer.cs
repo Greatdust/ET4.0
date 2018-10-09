@@ -124,11 +124,11 @@ namespace ETModel
         }
 
         /// <summary>
-        /// 从CircularBuffer写到stream流中（已经没用了）
+        /// 从CircularBuffer读到stream中
         ///  (一次最多写入一块内存，可以判断棧中是否还有数据 再次调用 直到全部写完)
         /// </summary>
-        public async Task WriteToAsync(Stream stream)
-	    {
+        public async Task ReadAsync(Stream stream)
+        {
 		    long buffLength = this.Length;
 			int sendSize = this.ChunkSize - this.FirstIndex;
 		    if (sendSize > buffLength)                          //说明要写入流中的数据在一个内存中 
@@ -146,12 +146,12 @@ namespace ETModel
             }
 		}
         /// <summary>
-        /// 从stream流读到CircularBuffer中 （已经没用了）
+        /// 从CircularBuffer读到stream
         /// </summary>
         /// <param name="stream"></param>
         /// <returns></returns>
-        public void WriteTo(Stream stream, int count)
-	    {
+        public void Read(Stream stream, int count)
+        {
 		    if (count > this.Length)
 		    {
 			    throw new Exception($"bufferList length < count, {Length} {count}");
@@ -176,12 +176,12 @@ namespace ETModel
 			    }
 		    }
 	    }
-	    /// <summary>
-        /// 读取流数据
+        /// <summary>
+        ///从stream写入CircularBuffer
         /// </summary>
         /// <param name="stream"></param>
-	    public void ReadFrom(Stream stream)
-		{
+        public void Write(Stream stream)
+        {
 			int count = (int)(stream.Length - stream.Position);
 			
 			int alreadyCopyCount = 0;
@@ -211,12 +211,12 @@ namespace ETModel
 
 
         /// <summary>
-        /// 异步读取流数据
+        /// 从stream写入CircularBuffer
         /// </summary>
         /// <param name="stream"></param>
         /// <returns></returns>
-        public async Task<int> ReadFromAsync(Stream stream)
-	    {
+        public async Task<int> WriteAsync(Stream stream)
+        {
 		    int size = this.ChunkSize - this.LastIndex;
 		    
 		    int n = await stream.ReadAsync(this.Last, this.LastIndex, size);

@@ -29,11 +29,12 @@ namespace ETEditor
             string newestPdb = "";
             foreach (string pdbDir in pdbDirs)
             {
-                if (!Directory.Exists(pdbDir))
+                string pdbPath = Path.Combine(pdbDir, HotfixPdb);
+                if (!File.Exists(pdbPath))
                 {
                     continue;
                 }
-                string pdbPath = Path.Combine(pdbDir, HotfixPdb);
+                
                 FileInfo fi = new FileInfo(pdbPath);
                 DateTime lastWriteTimeUtc = fi.LastWriteTimeUtc;
                 if (lastWriteTimeUtc > dateTime)
