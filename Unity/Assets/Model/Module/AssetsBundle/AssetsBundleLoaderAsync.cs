@@ -12,7 +12,9 @@ namespace ETModel
 			self.Update();
 		}
 	}
-
+    /// <summary>
+    /// 异步加载AB包
+    /// </summary>
 	public class AssetsBundleLoaderAsync : Component
 	{
 		private AssetBundleCreateRequest request;
