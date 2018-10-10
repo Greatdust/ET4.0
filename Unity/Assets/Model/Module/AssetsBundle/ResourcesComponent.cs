@@ -366,7 +366,7 @@ namespace ETModel
 			dict[assetName] = resource;
 		}
         /// <summary>
-        /// 加载一个AB包
+        /// 同步加载一个AB包
         /// </summary>
         /// <param name="assetBundleName"></param>
 		public void LoadOneBundle(string assetBundleName)
@@ -400,7 +400,7 @@ namespace ETModel
 			AssetBundle assetBundle = null;
 			if (File.Exists(p))
 			{
-                //从本地加载 LoadFromFile(无需用协程)
+                //从本地加载 LoadFromFile(无需用协程 同步加载)
                 assetBundle = AssetBundle.LoadFromFile(p);
 			}
 			else
@@ -434,8 +434,8 @@ namespace ETModel
 		/// <returns></returns>
 		public async Task LoadBundleAsync(string assetBundleName)
 		{
-            assetBundleName = assetBundleName.ToLower();
-			string[] dependencies = AssetBundleHelper.GetSortedDependencies(assetBundleName);
+            assetBundleName = assetBundleName.ToLower(); //转小写
+			string[] dependencies = AssetBundleHelper.GetSortedDependencies(assetBundleName);//获得所有依赖
             // Log.Debug($"-----------dep load {assetBundleName} dep: {dependencies.ToList().ListToString()}");
             foreach (string dependency in dependencies)
 			{
@@ -443,10 +443,15 @@ namespace ETModel
 				{
 					continue;
 				}
-				await this.LoadOneBundleAsync(dependency);
+				await this.LoadOneBundleAsync(dependency); //异步加载单个AB包
 			}
         }
 
+        /// <summary>
+        /// 异步加载单个AB包
+        /// </summary>
+        /// <param name="assetBundleName"></param>
+        /// <returns></returns>
 		public async Task LoadOneBundleAsync(string assetBundleName)
 		{
 			ABInfo abInfo;
@@ -483,7 +488,7 @@ namespace ETModel
 			
 			using (AssetsBundleLoaderAsync assetsBundleLoaderAsync = ComponentFactory.Create<AssetsBundleLoaderAsync>())
 			{
-				assetBundle = await assetsBundleLoaderAsync.LoadAsync(p);
+				assetBundle = await assetsBundleLoaderAsync.LoadAsync(p); //异步加载
 			}
 
 			if (assetBundle == null)
@@ -497,8 +502,9 @@ namespace ETModel
 				UnityEngine.Object[] assets;
 				using (AssetsLoaderAsync assetsLoaderAsync = ComponentFactory.Create<AssetsLoaderAsync, AssetBundle>(assetBundle))
 				{
-					assets = await assetsLoaderAsync.LoadAllAssetsAsync();
-				}
+					assets = await assetsLoaderAsync.LoadAllAssetsAsync(); //异步加载AB包里都所有资源
+
+                }
 				foreach (UnityEngine.Object asset in assets)
 				{
 					AddResource(assetBundleName, asset.name, asset);
@@ -508,6 +514,10 @@ namespace ETModel
 			this.bundles[assetBundleName] = new ABInfo(assetBundleName, assetBundle);
 		}
 
+        /// <summary>
+        /// 打印出所有已加载的AB包的名字和被引用的次数
+        /// </summary>
+        /// <returns></returns>
 		public string DebugString()
 		{
 			StringBuilder sb = new StringBuilder();

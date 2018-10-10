@@ -15,7 +15,9 @@ namespace ETModel
 			}
 		}
 	}
-
+    /// <summary>
+    /// 异步加载场景 使用了Task
+    /// </summary>
 	public class SceneChangeComponent: Component
 	{
 		public AsyncOperation loadMapOperation;

@@ -27,9 +27,10 @@ namespace ETModel
 					}
 					
 					Game.EventSystem.Run(EventIdType.LoadingFinish); //发出加载完成事件消息
-					
-					Game.Scene.GetComponent<ResourcesComponent>().LoadOneBundle("StreamingAssets");
-					ResourcesComponent.AssetBundleManifestObject = (AssetBundleManifest)Game.Scene.GetComponent<ResourcesComponent>().GetAsset("StreamingAssets", "AssetBundleManifest");
+                    //同步加载StreamingAssets ab包
+                    Game.Scene.GetComponent<ResourcesComponent>().LoadOneBundle("StreamingAssets");
+                    //拿到StreamingAssets ab包的依赖文件AssetBundleManifest
+                    ResourcesComponent.AssetBundleManifestObject = (AssetBundleManifest)Game.Scene.GetComponent<ResourcesComponent>().GetAsset("StreamingAssets", "AssetBundleManifest");
 				}
 				catch (Exception e)
 				{

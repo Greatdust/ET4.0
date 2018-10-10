@@ -22,6 +22,9 @@ namespace ETModel
 		}
 	}
 
+    /// <summary>
+    /// 用 async 封装了 unity的异步加载所有资源API
+    /// </summary>
 	public class AssetsLoaderAsync : Component
 	{
 		private AssetBundle assetBundle;
@@ -67,7 +70,7 @@ namespace ETModel
 		private Task<bool> InnerLoadAllAssetsAsync()
 		{
 			this.tcs = new TaskCompletionSource<bool>();
-			this.request = assetBundle.LoadAllAssetsAsync();
+			this.request = assetBundle.LoadAllAssetsAsync(); //异步加载AB包里都所有资源
 			return this.tcs.Task;
 		}
 	}

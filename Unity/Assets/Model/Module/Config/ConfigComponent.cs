@@ -32,7 +32,9 @@ namespace ETModel
         {
             this.Load();
         }
-
+        /// <summary>
+        /// 找到配置类 并加入字典中
+        /// </summary>
         public void Load()
         {
             this.allConfig.Clear();
