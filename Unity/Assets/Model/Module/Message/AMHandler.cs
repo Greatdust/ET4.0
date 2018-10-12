@@ -2,6 +2,10 @@
 
 namespace ETModel
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="Message"></typeparam>
 	public abstract class AMHandler<Message> : IMHandler where Message: class
 	{
 		protected abstract void Run(Session session, Message message);

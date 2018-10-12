@@ -67,7 +67,7 @@ namespace ETModel
 			{
 				this.Network.Remove(id); 
 			};
-			channel.ReadCallback += this.OnRead;  //收到通讯数据回调
+			channel.ReadCallback += this.OnRead;  //收到网络通讯数据回调  
         }
 		
 		public override void Dispose()
@@ -133,7 +133,7 @@ namespace ETModel
 			}
 		}
         /// <summary>
-        /// 收到通讯数据
+        /// 收到的网络消息  都会在这里进行处理
         /// </summary>
         /// <param name="packet">Packet.</param>
         public void OnRead(MemoryStream memoryStream)
@@ -149,23 +149,25 @@ namespace ETModel
 		}
 
         /// <summary>
-        /// 处理收到的通讯数据
+        /// 处理收到的网络消息
         /// </summary>
         /// <param name="packet">Packet.</param>
         private void Run(MemoryStream memoryStream)
 		{
 			memoryStream.Seek(Packet.MessageIndex, SeekOrigin.Begin);
 			byte flag = memoryStream.GetBuffer()[Packet.FlagIndex];
+            //得到操作码
 			ushort opcode = BitConverter.ToUInt16(memoryStream.GetBuffer(), Packet.OpcodeIndex);
 			
 #if !SERVER  
+            //如果是客户端  如果是热更新的操作码 就直接把收到的消息派发处理
 			if (OpcodeHelper.IsClientHotfixMessage(opcode))
 			{
 				this.GetComponent<SessionCallbackComponent>().MessageCallback.Invoke(this, flag, opcode, memoryStream);
 				return;
 			}
 #endif
-            
+           
             object message;
 			try
 			{
@@ -183,26 +185,26 @@ namespace ETModel
 				return;
 			}
 
-			// flag第一位为1表示这是rpc返回消息,否则交由MessageDispatcher分发
-			if ((flag & 0x01) == 0)
+            // flag第一位为1表示这是rpc返回消息  如果是0 说明这个只是普通的消息 由MessageDispatcher处理
+            if ((flag & 0x01) == 0)
 			{
 				this.Network.MessageDispatcher.Dispatch(this, opcode, message);
 				return;
 			}
-				
-			IResponse response = message as IResponse;
-			if (response == null)
+            //是RPC消息  把消息体转换为	IResponse 类型
+            IResponse response = message as IResponse;
+			if (response == null) //做验证保护
 			{
 				throw new Exception($"flag is response, but message is not! {opcode}");
 			}
 			Action<IResponse> action;   //如果回来的是RPC消息  查看RPC消息列表
             if (!this.requestCallback.TryGetValue(response.RpcId, out action))
 			{
-				return;
+				return; //没有就滚蛋
 			}
 			this.requestCallback.Remove(response.RpcId); //从字典中移除这个RPC消息
 
-            action(response);   //处理这个消息 RPC收到消息
+            action(response);   //处理这个消息 RPC消息
         }
 
         /// <summary>
@@ -266,8 +268,8 @@ namespace ETModel
             cancellationToken.Register(() => this.requestCallback.Remove(rpcId));
 
 			request.RpcId = rpcId;
-			this.Send(0x00, request);
-			return tcs.Task;
+			this.Send(0x00, request);//为什么是00呢?因为服务器不会主动和客户端发消息把，而客户端发过去的消息， 服务器不需要判断是不是RPC，如果是需要回复RPC的，直接用Reply就可以了
+            return tcs.Task;
 		}
         /// <summary>
         /// 发送消息 
@@ -288,7 +290,7 @@ namespace ETModel
 				throw new Exception("session已经被Dispose了");
 			}
 
-			this.Send(0x01, message);
+			this.Send(0x01, message); //表示这个是一个RPC消息
 		}
         //发送消息 
         public void Send(byte flag, IMessage message)
@@ -305,7 +307,7 @@ namespace ETModel
 			{
 				throw new Exception("session已经被Dispose了");
 			}
-
+            //把消息塞到流中  用来发送
 			MemoryStream stream = this.Stream;
 			
 			stream.Seek(Packet.MessageIndex, SeekOrigin.Begin);

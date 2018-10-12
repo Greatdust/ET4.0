@@ -4,26 +4,51 @@ namespace ETModel
 {
 	public static class PositionHelper
 	{
+        /// <summary>
+        ///  Vector2转 Vector3
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <returns></returns>
 		public static Vector3 RayCastV2ToV3(Vector2 pos)
 		{
             return new Vector3(pos.x, 0, pos.y);
 		}
-
+        /// <summary>
+        /// 坐标转 Vector3
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
 		public static Vector3 RayCastXYToV3(float x, float y)
         {
 			return new Vector3(x, 0, y);
 		}
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <returns></returns>
 		public static Vector3 RayCastV3ToV3(Vector3 pos)
 		{
 			return new Vector3(pos.x, 0, pos.z);
 		}
 
+        /// <summary>
+        /// 角度转四元数
+        /// </summary>
+        /// <param name="angle"></param>
+        /// <returns></returns>
 		public static Quaternion AngleToQuaternion(int angle)
 		{
-			return Quaternion.AngleAxis(-angle, Vector3.up) * Quaternion.AngleAxis(90, Vector3.up);
+          
+            return Quaternion.AngleAxis(-angle, Vector3.up) * Quaternion.AngleAxis(90, Vector3.up);
 		}
-
+        /// <summary>
+        /// 坐标和朝向转四元素
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="dire"></param>
+        /// <returns></returns>
 		public static Quaternion GetVector3ToQuaternion(Vector3 source, Vector3 dire)
 		{
 			Vector3 nowPos = source;
@@ -35,6 +60,12 @@ namespace ETModel
 			return Quaternion.LookRotation(direction, Vector3.up);
 		}
 
+        /// <summary>
+        /// 两个物体距离差距
+        /// </summary>
+        /// <param name="u1"></param>
+        /// <param name="u2"></param>
+        /// <returns></returns>
         public static float Distance2D(Unit u1, Unit u2)
         {
             Vector2 v1 = new Vector2(u1.GameObject.transform.position.x, u1.GameObject.transform.position.z);
@@ -42,6 +73,12 @@ namespace ETModel
             return Vector2.Distance(v1, v2);
         }
 
+        /// <summary>
+        /// 两个坐标位置差距
+        /// </summary>
+        /// <param name="v1"></param>
+        /// <param name="v2"></param>
+        /// <returns></returns>
         public static float Distance2D(Vector3 v1, Vector3 v2)
         {
             Vector2 d1 = new Vector2(v1.x, v1.z);
@@ -49,11 +86,22 @@ namespace ETModel
             return Vector2.Distance(d1, d2);
         }
 
+        /// <summary>
+        /// 角度转四元数
+        /// </summary>
+        /// <param name="angle"></param>
+        /// <returns></returns>
         public static Quaternion GetAngleToQuaternion(float angle)
 		{
 			return Quaternion.AngleAxis(-angle, Vector3.up) * Quaternion.AngleAxis(90, Vector3.up);
 		}
 
+        /// <summary>
+        /// 位置转换角度
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <returns></returns>
 		public static float Vector3ToAngle360(Vector3 from, Vector3 to)
 		{
 			float angle = Vector3.Angle(from, to);

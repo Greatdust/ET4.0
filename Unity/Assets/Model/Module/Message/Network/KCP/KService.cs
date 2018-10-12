@@ -246,7 +246,7 @@ namespace ETModel
 							}
 						}
 						break;
-					case KcpProtocalType.MSG:  // 断开
+					case KcpProtocalType.MSG:  // 断开？
 						// 长度<9，不是Msg消息
 						if (messageLength < 9)
 						{

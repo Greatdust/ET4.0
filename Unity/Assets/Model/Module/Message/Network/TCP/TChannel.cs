@@ -8,10 +8,11 @@ using Microsoft.IO;
 
 namespace ETModel
 {
-	/// <summary>
-	/// 封装Socket,将回调push到主线程处理
-	/// </summary>
-	public sealed class TChannel: AChannel
+    /// <summary>
+    /// 封装Socket,对外的关键方法有Send()，发送消息 
+    /// OnRead()接收消息 每收到了一个包，就会调用这个函数，把数据抛给ReadCallback这个委托处理
+    /// </summary>
+    public sealed class TChannel: AChannel
 	{
 		private Socket socket;
         //用于写入，读取和接受套接字操作
@@ -64,14 +65,14 @@ namespace ETModel
 			this.innArgs.Completed += this.OnComplete; //接收到数据的回调
             this.outArgs.Completed += this.OnComplete;   //接收到数据的回调
 
-			this.RemoteAddress = ipEndPoint;
+			this.RemoteAddress = ipEndPoint; //得到远程端IP
 
 			this.isConnected = false;
 			this.isSending = false;
 		}
 
         /// <summary>
-        /// 初始化远程端Socket ，已经连接了 所以传入的参数是Socket 而不是远程IP地址
+        /// 初始化远程端Socket ，已经连接了 传入的参数是Socket 而不是远程IP地址
         /// </summary>
         /// <param name="socket"></param>
         /// <param name="service"></param>
@@ -109,12 +110,19 @@ namespace ETModel
 			this.socket = null;
 			this.memoryStream.Dispose();
 		}
-		
-		private TService GetService()
+
+        /// <summary>
+        /// 获得通讯中心Service
+        /// </summary>
+        /// <returns></returns>
+        private TService GetService()
 		{
 			return (TService)this.service;
 		}
 
+        /// <summary>
+        /// 返回流
+        /// </summary>
 		public override MemoryStream Stream
 		{
 			get
@@ -131,13 +139,13 @@ namespace ETModel
 				return;
 			}
 
-			if (!this.isRecving)
+			if (!this.isRecving)  //如果没有开始接收消息数据
 			{
 				this.isRecving = true;
 				this.StartRecv();  //开始接收
             }
 
-			this.GetService().MarkNeedStartSend(this.Id);  //开始发送
+			this.GetService().MarkNeedStartSend(this.Id);  // 开始发送
         }
 
         /// <summary>
@@ -166,11 +174,12 @@ namespace ETModel
             }
 
             this.sendBuffer.Write(this.cache, 0, this.cache.Length);
-            this.sendBuffer.Write(stream);
+            this.sendBuffer.Write(stream);   //写入缓存
 
-            this.GetService().MarkNeedStartSend(this.Id);
+            this.GetService().MarkNeedStartSend(this.Id); //标记又可以开始发送消息 
 		}
 
+    
 		private void OnComplete(object sender, SocketAsyncEventArgs e)
 		{
 			switch (e.LastOperation)
@@ -195,11 +204,11 @@ namespace ETModel
         /// <summary>
         /// 连接服务器
         /// </summary>
-        /// <param name="ipEndPoint">Ip end point.</param>
+        /// <param name="ipEndPoint">远程端地址.</param>
         public void ConnectAsync(IPEndPoint ipEndPoint)
 		{
 			this.outArgs.RemoteEndPoint = ipEndPoint;
-			if (this.socket.ConnectAsync(this.outArgs))
+			if (this.socket.ConnectAsync(this.outArgs)) //连接远程服务器
 			{
 				return;
 			}
@@ -247,7 +256,12 @@ namespace ETModel
 			int size = this.recvBuffer.ChunkSize - this.recvBuffer.LastIndex;
 			this.RecvAsync(this.recvBuffer.Last, this.recvBuffer.LastIndex, size);
 		}
-
+        /// <summary>
+        /// 接收数据
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <param name="offset"></param>
+        /// <param name="count"></param>
 		public void RecvAsync(byte[] buffer, int offset, int count)
 		{
 			try
@@ -353,10 +367,15 @@ namespace ETModel
 			{
 				sendSize = (int)this.sendBuffer.Length;
 			}
-
+            //发送消息
 			this.SendAsync(this.sendBuffer.First, this.sendBuffer.FirstIndex, sendSize);
 		}
-
+        /// <summary>
+        /// 异步发送消息
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <param name="offset"></param>
+        /// <param name="count"></param>
 		public void SendAsync(byte[] buffer, int offset, int count)
 		{
 			try

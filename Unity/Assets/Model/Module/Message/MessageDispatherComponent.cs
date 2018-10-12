@@ -22,7 +22,7 @@ namespace ETModel
 	}
 
 	/// <summary>
-	/// 消息分发组件
+	/// 普通消息分发组件
 	/// </summary>
 	public class MessageDispatherComponent : Component
 	{

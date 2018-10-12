@@ -53,6 +53,11 @@ namespace ETModel
 			}
 		}
 
+        /// <summary>
+        /// 初始化
+        /// </summary>
+        /// <param name="protocol">通讯协议 TCP ? KCP ? WEB?</param>
+        /// <param name="address">本地IP地址</param>
 		public void Awake(NetworkProtocol protocol, string address)
 		{
 			try
@@ -62,8 +67,8 @@ namespace ETModel
 				{
 					case NetworkProtocol.KCP:
 						ipEndPoint = NetworkHelper.ToIPEndPoint(address);
-						this.Service = new KService(ipEndPoint, this.OnAccept);
-						break;
+						this.Service = new KService(ipEndPoint, this.OnAccept); //传过去 得到客户端AChannel的回调
+                        break;
 					case NetworkProtocol.TCP:
 						ipEndPoint = NetworkHelper.ToIPEndPoint(address);
 						this.Service = new TService(ipEndPoint, this.OnAccept);
@@ -80,7 +85,7 @@ namespace ETModel
 			}
 		}
         /// <summary>
-        /// 会话的数量
+        /// 会话的数量 就是连接这个服务器的客户端的数量  
         /// </summary>
         /// <value>The count.</value>
         public int Count
@@ -90,7 +95,7 @@ namespace ETModel
 
 
         /// <summary>
-        /// 得到连接到的远程端
+        /// 所有连接到服务器的客户端的会话 都会从这个方法中得到
         /// </summary>
         /// <param name="channel">Channel.</param>
         public void OnAccept(AChannel channel)
@@ -127,7 +132,7 @@ namespace ETModel
 		}
 
 		/// <summary>
-		/// 创建一个新Session
+		/// 创建一个新Session  这个才是客户端用到的
 		/// </summary>
 		public Session Create(IPEndPoint ipEndPoint)
 		{
@@ -137,11 +142,11 @@ namespace ETModel
 			session.Start();
 			return session;
 		}
-		
-		/// <summary>
-		/// 创建一个新Session
-		/// </summary>
-		public Session Create(string address)
+
+        /// <summary>
+        /// 创建一个新Session  这个才是客户端用到的
+        /// </summary>
+        public Session Create(string address)
 		{
 			AChannel channel = this.Service.ConnectChannel(address);
 			Session session = ComponentFactory.CreateWithParent<Session, AChannel>(this, channel);

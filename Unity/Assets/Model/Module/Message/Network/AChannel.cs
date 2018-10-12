@@ -5,7 +5,7 @@ using System.Net;
 namespace ETModel
 {
     /// <summary>
-    /// 信道类型；通道类型
+    /// 信道类型；通道类型 关键就两个方法  ReadCallback 接收消息 void Send(MemoryStream stream);发送消息
     /// </summary>
     public enum ChannelType
 	{
@@ -62,11 +62,13 @@ namespace ETModel
 			}
 		}
         /// <summary>
-        /// 接收消息
+        /// 接收消息委托  解析到的消息 会从这里发出去
         /// </summary>
         private Action<MemoryStream> readCallback;
-
-		public event Action<MemoryStream> ReadCallback
+        /// <summary>
+        /// 接收消息委托  供外部调用
+        /// </summary>
+        public event Action<MemoryStream> ReadCallback
 		{
 			add
 			{
@@ -77,8 +79,11 @@ namespace ETModel
 				this.readCallback -= value;
 			}
 		}
-		
-		protected void OnRead(MemoryStream memoryStream)
+        /// <summary>
+        /// 接收到的消息会调用委托把消息抛出去
+        /// </summary>
+        /// <param name="memoryStream"></param>
+        protected void OnRead(MemoryStream memoryStream)
 		{
 			this.readCallback.Invoke(memoryStream);
 		}
@@ -94,6 +99,11 @@ namespace ETModel
 			this.errorCallback?.Invoke(this, e);
 		}
 
+        /// <summary>
+        /// 初始化
+        /// </summary>
+        /// <param name="service"></param>
+        /// <param name="channelType"></param>
 		protected AChannel(AService service, ChannelType channelType)
 		{
 			this.Id = IdGenerater.GenerateId();
@@ -101,13 +111,11 @@ namespace ETModel
 			this.service = service;
 		}
 
-        /// <summary>
-        /// 发送消息
-        /// </summary>
+ 
         public abstract void Start();
 
         /// <summary>
-        /// 发送消息
+        /// 发送消息  供外部调用
         /// </summary>
         public abstract void Send(MemoryStream stream);
         /// <summary>

@@ -16,6 +16,12 @@ public class ReferenceCollectorData
 
 public class ReferenceCollectorDataComparer: IComparer<ReferenceCollectorData>
 {
+    /// <summary>
+    /// 比较两个类是否相同 （其KEY值一样）
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
 	public int Compare(ReferenceCollectorData x, ReferenceCollectorData y)
 	{
 		return string.Compare(x.key, y.key, StringComparison.Ordinal);

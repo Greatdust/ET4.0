@@ -1,5 +1,8 @@
 ﻿namespace ETModel
 {
+    /// <summary>
+    /// 普通消息派发
+    /// </summary>
 	public class OuterMessageDispatcher: IMessageDispatcher
 	{
 		public void Dispatch(Session session, ushort opcode, object message)
@@ -12,7 +15,7 @@
 				return;
 			}
 
-			// 普通消息或者是Rpc请求消息
+			// 普通消息处理
 			MessageInfo messageInfo = new MessageInfo(opcode, message);
 			Game.Scene.GetComponent<MessageDispatherComponent>().Handle(session, messageInfo);
 		}

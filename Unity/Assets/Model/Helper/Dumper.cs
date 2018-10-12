@@ -11,11 +11,18 @@ namespace ETModel
     {
         private static readonly StringBuilder _text = new StringBuilder("", 1024);
 
+        /// <summary>
+        /// 在字符串后面添加' '，数量为num
+        /// </summary>
+        /// <param name="num"></param>
         private static void AppendIndent(int num)
         {
             _text.Append(' ', num);
         }
-
+        /// <summary>
+        /// 如果object为空  在字符串后面加上"null"和","
+        /// </summary>
+        /// <param name="obj"></param>
         private static void DoDump(object obj)
         {
             if (obj == null)
@@ -106,7 +113,12 @@ namespace ETModel
                 AppendIndent(1);
             }
         }
-
+        /// <summary>
+        /// 应该是DEBUG用的 但是没有用到
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="hint"></param>
+        /// <returns></returns>
         public static string DumpAsString(object obj, string hint = "")
         {
             _text.Clear();

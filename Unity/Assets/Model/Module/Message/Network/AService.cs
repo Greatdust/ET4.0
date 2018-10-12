@@ -24,11 +24,13 @@ namespace ETModel
 		/// <param name="id">Identifier.</param>
 		public abstract AChannel GetChannel(long id);
         /// <summary>
-        /// 接收通道
+        /// 接收通道 返回所有连接了服务器的客户端的Channel（这里是服务器时才有用）
         /// </summary>
         /// <returns>The channel.</returns>
         private Action<AChannel> acceptCallback;
-
+        /// <summary>
+        /// 接收通道
+        /// </summary>
 		public event Action<AChannel> AcceptCallback
 		{
 			add
@@ -40,19 +42,22 @@ namespace ETModel
 				this.acceptCallback -= value;
 			}
 		}
-		
-		protected void OnAccept(AChannel channel)
+        /// <summary>
+        /// 调用接收通道 
+        /// </summary>
+        /// <param name="channel"></param>
+        protected void OnAccept(AChannel channel)
 		{
 			this.acceptCallback.Invoke(channel);
 		}
         /// <summary>
-        /// 连接通道
+        /// 连接服务器(这个才是客户端才会用到的)
         /// </summary>
         /// <returns>The channel.</returns>
         /// <param name="ipEndPoint">Ip end point.</param>
         public abstract AChannel ConnectChannel(IPEndPoint ipEndPoint);
         /// <summary>
-        /// 连接通道
+        /// 连接服务器(这个才是客户端才会用到的)
         /// </summary>
         /// <returns>The channel.</returns>
         /// <param name="ipEndPoint">Ip end point.</param>

@@ -1,17 +1,20 @@
 ﻿namespace ETModel
 {
+    /// <summary>
+    ///  普通消息
+    /// </summary>
 	public interface IMessage
 	{
 	}
     /// <summary>
-    ///  回应
+    ///  请求 只有一个RPC id
     /// </summary>
     public interface IRequest: IMessage
 	{
 		int RpcId { get; set; }
 	}
     /// <summary>
-    ///  回应
+    ///  响应 有RPC id 错误代码 和 string消息
     /// </summary>
     public interface IResponse : IMessage
 	{
@@ -20,7 +23,7 @@
 		int RpcId { get; set; }
 	}
     /// <summary>
-	/// 应答消息
+	/// 响应 有RPC id 错误代码 和 string消息 
 	/// </summary>
 	public class ResponseMessage : IResponse
 	{

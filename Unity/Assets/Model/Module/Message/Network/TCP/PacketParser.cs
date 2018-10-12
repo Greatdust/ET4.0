@@ -72,6 +72,11 @@ namespace ETModel
 
 		private bool isOK;
 
+        /// <summary>
+        /// 初始化
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <param name="memoryStream"></param>
 		public PacketParser(CircularBuffer buffer, MemoryStream memoryStream)
 		{
 			this.buffer = buffer;

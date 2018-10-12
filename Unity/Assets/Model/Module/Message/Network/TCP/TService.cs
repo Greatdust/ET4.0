@@ -8,6 +8,10 @@ using Microsoft.IO;
 
 namespace ETModel
 {
+    /// <summary>
+    ///  关键的方法有 TService()初始化时绑定了自己的端口 等待远程端的连接，如果是客户端，其实是没有
+    ///  远程端连接来的 只是为了共用，客户端主要用到ConnectChannel（）方法，用来创建一个 TChannel（Socket）和服务器连接
+    /// </summary>
 	public sealed class TService : AService
 	{
         /// <summary>
@@ -22,18 +26,25 @@ namespace ETModel
         /// 本地Socket
         /// </summary>
         private Socket acceptor;
-		
-		public RecyclableMemoryStreamManager MemoryStreamManager = new RecyclableMemoryStreamManager();
-		
-		public HashSet<long> needStartSendChannel = new HashSet<long>();
-		
 		/// <summary>
-		/// 即可做client也可做server
-		/// </summary>
-		public TService(IPEndPoint ipEndPoint, Action<AChannel> acceptCallback)
+        /// 流管理器 从里面获取流   节省GC
+        /// </summary>
+		public RecyclableMemoryStreamManager MemoryStreamManager = new RecyclableMemoryStreamManager();
+		/// <summary>
+        /// 可以开始发送消息的信道的ID
+        /// </summary>
+		public HashSet<long> needStartSendChannel = new HashSet<long>();
+
+
+        /// <summary>
+        /// 初始化
+        /// </summary>
+        /// <param name="ipEndPoint">本地IP</param>
+        /// <param name="acceptCallback">用于处理接收到消息数据的方法</param>
+        public TService(IPEndPoint ipEndPoint, Action<AChannel> acceptCallback)
 		{
 			this.InstanceId = IdGenerater.GenerateId();
-			this.AcceptCallback += acceptCallback;
+			this.AcceptCallback += acceptCallback; //处理接收到消息的函数
 			
 			this.acceptor = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             // 端口复用。ReuseAddress选项设置为True将允许将套接字绑定到已在使用中的地址。 
@@ -78,17 +89,6 @@ namespace ETModel
 			this.innArgs.Dispose();
 		}
 
-		private void OnComplete(object sender, SocketAsyncEventArgs e)
-		{
-			switch (e.LastOperation)
-			{
-				case SocketAsyncOperation.Accept:
-					OneThreadSynchronizationContext.Instance.Post(this.OnAcceptComplete, e);
-					break;
-				default:
-					throw new Exception($"socket error: {e.LastOperation}");
-			}
-		}
 
         /// <summary>
         /// 监听远程端的连接
@@ -101,6 +101,22 @@ namespace ETModel
 				return;
 			}
 			OnAcceptComplete(this.innArgs);  //连接服务器成功回调
+        }
+        /// <summary>
+        /// SocketAsyncEventArgs 里面的方法
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnComplete(object sender, SocketAsyncEventArgs e)
+        {
+            switch (e.LastOperation)
+            {
+                case SocketAsyncOperation.Accept:
+                    OneThreadSynchronizationContext.Instance.Post(this.OnAcceptComplete, e);
+                    break;
+                default:
+                    throw new Exception($"socket error: {e.LastOperation}");
+            }
         }
 
         /// <summary>
@@ -156,7 +172,7 @@ namespace ETModel
         /// 根据IP地址创建新的远程端channel（就是远程端Socket） 但是这时并没有连接服务器成功，需要在channel初始化Start()
         /// </summary>
         /// <returns>The channel.</returns>
-        /// <param name="ipEndPoint">Ip end point.</param>
+        /// <param name="ipEndPoint">远程端IP.</param>
         public override AChannel ConnectChannel(IPEndPoint ipEndPoint)
 		{
 			TChannel channel = new TChannel(ipEndPoint, this);
@@ -203,6 +219,8 @@ namespace ETModel
 
 		public override void Update()
 		{
+            //不是一直发消息的 ，如果消息缓存中的发完了 ，就会停止发消息，
+            //这个时候就不会一直查询缓存中是否有消息，只有再次发消息后，标记进了字典 才开始新的一轮发送
 			foreach (long id in this.needStartSendChannel)
 			{
 				TChannel channel;

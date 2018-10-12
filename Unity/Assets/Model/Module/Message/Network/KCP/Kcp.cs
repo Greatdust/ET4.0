@@ -4,7 +4,14 @@ using System.Runtime.InteropServices;
 namespace ETModel
 {
 
-    
+    /// <summary>
+    /// KCP内部委托
+    /// </summary>
+    /// <param name="buf"></param>
+    /// <param name="len"></param>
+    /// <param name="kcp"></param>
+    /// <param name="user"></param>
+    /// <returns></returns>
     public delegate int kcp_output(IntPtr buf, int len, IntPtr kcp, IntPtr user);
 
     public class Kcp
